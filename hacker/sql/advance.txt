@@ -1,0 +1,209 @@
+sql1 :-
+SELECT sku , product_name from PRODUCT WHERE
+id NOT IN(SELECT DISTINCT product_id from INVOICE_ITEM);
+
+sql2 :- 
+SELECT id FROM country where id IN
+(SELECT country_id FROM city where id IN
+(SELECT city_id FROM customer where id IN
+(SELECT distinct customer_id FROM invoice)));
+
+
+sql3 :- 
+
+SELECT c.city_id, a.customer_id , b.product_id from customer c , invoice a , 
+invoice_item b where a.id = b.invoice_id AND a.customer_id = c.id order by c.city_id DESC;
+
+
+SELECT a.customer_name , cast(b.total_price as decimal(10,6)) FROM customer a ,invoice b 
+where a.id = b.customer_id AND b.total_price < (SELECT AVG(total_price)*0.25 FROM invoice);
+
+
+SELECT d.city_name , c.city_id, a.customer_id , b.product_id from customer c , invoice a , 
+invoice_item b , city d where d.id = c.city_id AND a.id = b.invoice_id AND a.customer_id = c.id order by c.city_id DESC;
+
+
+SELECT coin_code , dt FROM transactions WHERE
+CAST(dt AS DATETIME) < '2020-04-01T00:00:00.000' AND CAST(dt AS DATETIME) > '2019-12-31T00:00:00.000'
+
+SELECT
+(SELECT MAX(data_value) FROM temperature_records WHERE data_type = "max" AND CAST(record_date AS DATETIME) > '2020-07-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-08-01T00:00:00.000') as Max,
+
+(SELECT MIN(data_value) FROM temperature_records WHERE data_type = "min" AND CAST(record_date AS DATETIME) > '2020-07-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-08-01T0 0:00:00.000' as Min
+
+
+
+SELECT(
+(SELECT MAX(data_value) FROM temperature_records WHERE data_type = "max" AND CAST(record_date AS DATETIME)
+ > '2020-07-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-08-01T00:00:00.000') ,
+
+(SELECT MIN(data_value) FROM temperature_records WHERE data_type = "min" AND CAST(record_date AS DATETIME) > '2020-07-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-08-01T00:00:00.000' ));
+
+Merging 2 queries :-
+/*** correct one
+SELECT ( 
+SELECT DISTINCT MONTH(CAST(record_date AS DATETIME)) FROM temperature_records WHERE CAST(record_date AS DATETIME) > 
+'2020-07-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-08-01T00:00:00.000') temperature_records
+ ,     
+(SELECT MAX(data_value) FROM temperature_records WHERE data_type = "max" AND CAST(record_date AS DATETIME) > 
+'2020-07-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-08-01T00:00:00.000') temperature_records 
+,
+(SELECT MIN(data_value) FROM temperature_records WHERE data_type = "min" AND CAST(record_date AS DATETIME) > 
+'2020-07-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-08-01T00:00:00.000' ) temperature_records,
+(SELECT CEILING(AVG(data_value)) FROM temperature_records WHERE data_type = "avg" AND CAST(record_date AS DATETIME) > 
+'2020-07-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-08-01T00:00:00.000' ) temperature_records
+ ;
+ **/
+ 
+ NEW :- 
+SELECT ( 
+SELECT DISTINCT MONTH(CAST(record_date AS DATETIME)) FROM temperature_records WHERE CAST(record_date AS DATETIME) > 
+'2020-07-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-08-01T00:00:00.000') temperature_records
+ ,     
+(SELECT MAX(data_value) FROM temperature_records WHERE data_type = "max" AND CAST(record_date AS DATETIME) > 
+'2020-07-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-08-01T00:00:00.000') temperature_records 
+,
+(SELECT MIN(data_value) FROM temperature_records WHERE data_type = "min" AND CAST(record_date AS DATETIME) > 
+'2020-07-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-08-01T00:00:00.000' ) temperature_records,
+(SELECT CEILING(AVG(data_value)) FROM temperature_records WHERE data_type = "avg" AND CAST(record_date AS DATETIME) > 
+'2020-07-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-08-01T00:00:00.000' ) temperature_records
+UNION
+SELECT ( 
+SELECT DISTINCT MONTH(CAST(record_date AS DATETIME)) FROM temperature_records WHERE CAST(record_date AS DATETIME) > 
+'2020-08-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-09-01T00:00:00.000') temperature_records
+ ,     
+(SELECT MAX(data_value) FROM temperature_records WHERE data_type = "max" AND CAST(record_date AS DATETIME) > 
+'2020-08-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-09-01T00:00:00.000') temperature_records 
+,
+(SELECT MIN(data_value) FROM temperature_records WHERE data_type = "min" AND CAST(record_date AS DATETIME) > 
+'2020-08-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-09-01T00:00:00.000' ) temperature_records,
+(SELECT CEILING(AVG(data_value)) FROM temperature_records WHERE data_type = "avg" AND CAST(record_date AS DATETIME) > 
+'2020-08-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-09-01T00:00:00.000' ) temperature_records
+UNION
+SELECT ( 
+SELECT DISTINCT MONTH(CAST(record_date AS DATETIME)) FROM temperature_records WHERE CAST(record_date AS DATETIME) > 
+'2020-09-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-10-01T00:00:00.000') temperature_records
+ ,     
+(SELECT MAX(data_value) FROM temperature_records WHERE data_type = "max" AND CAST(record_date AS DATETIME) > 
+'2020-09-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-10-01T00:00:00.000') temperature_records 
+,
+(SELECT MIN(data_value) FROM temperature_records WHERE data_type = "min" AND CAST(record_date AS DATETIME) > 
+'2020-09-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-10-01T00:00:00.000' ) temperature_records,
+(SELECT CEILING(AVG(data_value)) FROM temperature_records WHERE data_type = "avg" AND CAST(record_date AS DATETIME) > 
+'2020-09-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-10-01T00:00:00.000' ) temperature_records
+UNION
+SELECT ( 
+SELECT DISTINCT MONTH(CAST(record_date AS DATETIME)) FROM temperature_records WHERE CAST(record_date AS DATETIME) > 
+'2020-10-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-11-01T00:00:00.000') temperature_records
+ ,     
+(SELECT MAX(data_value) FROM temperature_records WHERE data_type = "max" AND CAST(record_date AS DATETIME) > 
+'2020-10-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-11-01T00:00:00.000') temperature_records 
+,
+(SELECT MIN(data_value) FROM temperature_records WHERE data_type = "min" AND CAST(record_date AS DATETIME) > 
+'2020-10-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-11-01T00:00:00.000' ) temperature_records,
+(SELECT CEILING(AVG(data_value)) FROM temperature_records WHERE data_type = "avg" AND CAST(record_date AS DATETIME) > 
+'2020-10-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-11-01T00:00:00.000' ) temperature_records
+UNION
+SELECT ( 
+SELECT DISTINCT MONTH(CAST(record_date AS DATETIME)) FROM temperature_records WHERE CAST(record_date AS DATETIME) > 
+'2020-11-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-12-01T00:00:00.000') temperature_records
+ ,     
+(SELECT MAX(data_value) FROM temperature_records WHERE data_type = "max" AND CAST(record_date AS DATETIME) > 
+'2020-11-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-12-01T00:00:00.000') temperature_records 
+,
+(SELECT MIN(data_value) FROM temperature_records WHERE data_type = "min" AND CAST(record_date AS DATETIME) > 
+'2020-11-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-12-01T00:00:00.000' ) temperature_records,
+(SELECT CEILING(AVG(data_value)) FROM temperature_records WHERE data_type = "avg" AND CAST(record_date AS DATETIME) > 
+'2020-11-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-12-01T00:00:00.000' ) temperature_records
+UNION
+SELECT ( 
+SELECT DISTINCT MONTH(CAST(record_date AS DATETIME)) FROM temperature_records WHERE CAST(record_date AS DATETIME) > 
+'2020-12-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2021-01-01T00:00:00.000') temperature_records
+ ,     
+(SELECT MAX(data_value) FROM temperature_records WHERE data_type = "max" AND CAST(record_date AS DATETIME) > 
+'2020-12-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2021-01-01T00:00:00.000') temperature_records 
+,
+(SELECT MIN(data_value) FROM temperature_records WHERE data_type = "min" AND CAST(record_date AS DATETIME) > 
+'2020-12-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2021-01-01T00:00:00.000' ) temperature_records,
+(SELECT CEILING(AVG(data_value)) FROM temperature_records WHERE data_type = "avg" AND CAST(record_date AS DATETIME) > 
+'2020-12-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2021-01-01T00:00:00.000' ) temperature_records
+ ;
+ 
+ 
+ 
+ 
+ New modified one : -
+ SELECT ( 
+SELECT DISTINCT MONTH(CAST(record_date AS DATETIME)) FROM temperature_records WHERE CAST(record_date AS DATETIME) > 
+'2020-07-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-08-01T00:00:00.000') temperature_records
+ ,     (SELECT SPACE(4)) ,
+(SELECT MAX(data_value) FROM temperature_records WHERE data_type = "max" AND CAST(record_date AS DATETIME) > 
+'2020-07-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-08-01T00:00:00.000') temperature_records 
+,   (SELECT SPACE(4)) ,
+(SELECT MIN(data_value) FROM temperature_records WHERE data_type = "min" AND CAST(record_date AS DATETIME) > 
+'2020-07-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-08-01T00:00:00.000' ) temperature_records,
+(SELECT SPACE(4)) ,
+(SELECT CEILING(AVG(data_value)) FROM temperature_records WHERE data_type = "avg" AND CAST(record_date AS DATETIME) > 
+'2020-07-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-08-01T00:00:00.000' ) temperature_records
+UNION
+SELECT ( 
+SELECT DISTINCT MONTH(CAST(record_date AS DATETIME)) FROM temperature_records WHERE CAST(record_date AS DATETIME) > 
+'2020-08-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-09-01T00:00:00.000') temperature_records
+ ,     
+(SELECT MAX(data_value) FROM temperature_records WHERE data_type = "max" AND CAST(record_date AS DATETIME) > 
+'2020-08-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-09-01T00:00:00.000') temperature_records 
+,
+(SELECT MIN(data_value) FROM temperature_records WHERE data_type = "min" AND CAST(record_date AS DATETIME) > 
+'2020-08-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-09-01T00:00:00.000' ) temperature_records,
+(SELECT CEILING(AVG(data_value)) FROM temperature_records WHERE data_type = "avg" AND CAST(record_date AS DATETIME) > 
+'2020-08-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-09-01T00:00:00.000' ) temperature_records
+UNION
+SELECT ( 
+SELECT DISTINCT MONTH(CAST(record_date AS DATETIME)) FROM temperature_records WHERE CAST(record_date AS DATETIME) > 
+'2020-09-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-10-01T00:00:00.000') temperature_records
+ ,     
+(SELECT MAX(data_value) FROM temperature_records WHERE data_type = "max" AND CAST(record_date AS DATETIME) > 
+'2020-09-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-10-01T00:00:00.000') temperature_records 
+,
+(SELECT MIN(data_value) FROM temperature_records WHERE data_type = "min" AND CAST(record_date AS DATETIME) > 
+'2020-09-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-10-01T00:00:00.000' ) temperature_records,
+(SELECT CEILING(AVG(data_value)) FROM temperature_records WHERE data_type = "avg" AND CAST(record_date AS DATETIME) > 
+'2020-09-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-10-01T00:00:00.000' ) temperature_records
+UNION
+SELECT ( 
+SELECT DISTINCT MONTH(CAST(record_date AS DATETIME)) FROM temperature_records WHERE CAST(record_date AS DATETIME) > 
+'2020-10-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-11-01T00:00:00.000') temperature_records
+ ,     
+(SELECT MAX(data_value) FROM temperature_records WHERE data_type = "max" AND CAST(record_date AS DATETIME) > 
+'2020-10-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-11-01T00:00:00.000') temperature_records 
+,
+(SELECT MIN(data_value) FROM temperature_records WHERE data_type = "min" AND CAST(record_date AS DATETIME) > 
+'2020-10-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-11-01T00:00:00.000' ) temperature_records,
+(SELECT CEILING(AVG(data_value)) FROM temperature_records WHERE data_type = "avg" AND CAST(record_date AS DATETIME) > 
+'2020-10-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-11-01T00:00:00.000' ) temperature_records
+UNION
+SELECT ( 
+SELECT DISTINCT MONTH(CAST(record_date AS DATETIME)) FROM temperature_records WHERE CAST(record_date AS DATETIME) > 
+'2020-11-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-12-01T00:00:00.000') temperature_records
+ ,     
+(SELECT MAX(data_value) FROM temperature_records WHERE data_type = "max" AND CAST(record_date AS DATETIME) > 
+'2020-11-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-12-01T00:00:00.000') temperature_records 
+,
+(SELECT MIN(data_value) FROM temperature_records WHERE data_type = "min" AND CAST(record_date AS DATETIME) > 
+'2020-11-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-12-01T00:00:00.000' ) temperature_records,
+(SELECT CEILING(AVG(data_value)) FROM temperature_records WHERE data_type = "avg" AND CAST(record_date AS DATETIME) > 
+'2020-11-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2020-12-01T00:00:00.000' ) temperature_records
+UNION
+SELECT ( 
+SELECT DISTINCT MONTH(CAST(record_date AS DATETIME)) FROM temperature_records WHERE CAST(record_date AS DATETIME) > 
+'2020-12-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2021-01-01T00:00:00.000') temperature_records
+ ,     
+(SELECT MAX(data_value) FROM temperature_records WHERE data_type = "max" AND CAST(record_date AS DATETIME) > 
+'2020-12-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2021-01-01T00:00:00.000') temperature_records 
+,
+(SELECT MIN(data_value) FROM temperature_records WHERE data_type = "min" AND CAST(record_date AS DATETIME) > 
+'2020-12-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2021-01-01T00:00:00.000' ) temperature_records,
+(SELECT CEILING(AVG(data_value)) FROM temperature_records WHERE data_type = "avg" AND CAST(record_date AS DATETIME) > 
+'2020-12-01T00:00:00.000' AND CAST(record_date AS DATETIME) < '2021-01-01T00:00:00.000' ) temperature_records
+ ;
+
